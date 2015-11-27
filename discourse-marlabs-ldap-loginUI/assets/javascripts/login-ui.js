@@ -2,13 +2,12 @@ $(document).ready(function(){
   var errorMessage = $("<div>").css("background-color", "#f2ab9a");
   var oldButton = $(".login-button");
   var loginButton = $("<button></button>");
-  
+  $("p:contains('An account is required. Please create an account or log in to continue.')").next().hide();
   loginButton.html(oldButton.html());
   loginButton.attr("class", oldButton.attr("class"));
   
   oldButton.after(loginButton);
   oldButton.hide();
-  $('.ember-view.d-header').css('z-index', 0);
 
   $(".login-button").click(function(event){
     event.preventDefault();

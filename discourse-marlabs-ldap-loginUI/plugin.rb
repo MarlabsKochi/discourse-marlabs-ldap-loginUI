@@ -1,5 +1,5 @@
 register_asset 'javascripts/jquery-ui.min.js'
-register_asset 'javascripts/simple.js'
+register_asset 'javascripts/login-ui.js'
 register_asset 'stylesheets/jquery-ui.min.css'
 register_asset 'stylesheets/style.css'
 
