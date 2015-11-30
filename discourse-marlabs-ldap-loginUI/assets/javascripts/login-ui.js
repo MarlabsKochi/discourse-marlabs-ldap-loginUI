@@ -18,26 +18,42 @@ $(document).ready(function(){
 
   $(document).on('click',function(event, loginModal){
     if($(event.currentTarget.activeElement).find("i").hasClass("fa fa-unlock") && $(event.currentTarget.activeElement).text().trim() === "Log In"){
-      submitLoginForm()
+      submitLoginForm();
     }
   })
 
   function submitLoginForm(){
     $("#modal-alert").addClass("alert alert-info").text("Please wait..").css("display", "block")
-      $.ajax({
-        'url' : '/auth/ldap/callback',
-        'type' : 'post',
-        'data' :{username : $("#login-account-name").val(), 
-                 password : $("#login-account-password").val()},
-        'success' : function(data, textStatus, xhr) { 
-          $("#modal-alert").text("Success!.Redirecting..");
-          location.reload();          
-        },
-        'error' : function(request,error)
-        {
-          $("#modal-alert").removeClass("alert-info").addClass("alert-error").text("Incorrect Username or Password");
-        }
+    var userName = $("#login-account-name");
+    var password =  $("#login-account-password");
+    hideLoginElements();
+    $.ajax({
+      'url' : '/auth/ldap/callback',
+      'type' : 'post',
+      'data' :{username : userName.val(), 
+               password : password.val()},
+      'success' : function(data, textStatus, xhr) { 
+        $("#modal-alert").text("Success!.Redirecting..");
+        location.reload();          
+      },
+      'error' : function(request,error)
+      {
+        showLoginElements();
+        $("#modal-alert").removeClass("alert-info").addClass("alert-error").text("Incorrect Username or Password");
+      }
     });
+  }
+
+  function hideLoginElements(){
+    $(".modal-footer").hide();
+    $(".modal-header").hide();
+    $("#login-form").hide();
+  }
+
+  function showLoginElements(){
+    $(".modal-footer").show();
+    $(".modal-header").show();
+    $("#login-form").show();
   }
  
 });
