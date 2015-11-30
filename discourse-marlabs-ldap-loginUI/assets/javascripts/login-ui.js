@@ -1,54 +1,43 @@
 $(document).ready(function(){
-  var errorMessage = $("<div>").css("background-color", "#f2ab9a");
-  var oldButton = $(".login-button");
-  var loginButton = $("<button></button>");
-  $("p:contains('An account is required. Please create an account or log in to continue.')").next().hide();
-  loginButton.html(oldButton.html());
-  loginButton.attr("class", oldButton.attr("class"));
-  
-  oldButton.after(loginButton);
-  oldButton.hide();
-
-  $(".login-button").click(function(event){
-    event.preventDefault();
-    $.ajax({
-      'url' : '/auth/ldap',
-      'type' : 'GET',
-      'success' : function(data) {              
-        $('<div id="dialogContainer"/>').html(data).dialog({
-          modal: true,
-          title: "Login to Continue",
-          width: 400,
-          height: 250});
-        $('.ui-dialog-titlebar').css('background-color', '#0088cc');
-        $(".ui-dialog-titlebar-close").html("X");
-        $("#dialogContainer").prepend(errorMessage);
-      },
-      'error' : function(request,error)
-      {
-        alert("Error: Something went wrong");
+  $('#discourse-modal').on('shown.bs.modal', function() {
+    $("#discourse-modal").find("*").removeClass("ember-view");
+    $( ".modal-footer" ).find( "button" ).removeAttr("data-ember-action");
+    $("#login-buttons").css("display", "none");
+    $("#forgot-password-link").css("display", "none");
+    $("#login-account-name").unbind().keyup(function(e){
+      if (e.keyCode === 13){
+        submitLoginForm();
       }
     });
-  });
+    $("#login-account-password").unbind().keyup(function(e){
+      if (e.keyCode === 13){
+        submitLoginForm();
+      }
+    });
+  })
 
+  $(document).on('click',function(event, loginModal){
+    if($(event.currentTarget.activeElement).find("i").hasClass("fa fa-unlock") && $(event.currentTarget.activeElement).text().trim() === "Log In"){
+      submitLoginForm()
+    }
+  })
 
-  $(document).on('click','#ldap-submit',function(event){
-    errorMessage.hide().text("");
-
-    $(".ui-dialog-title").html("Please Wait..");
+  function submitLoginForm(){
+    $("#modal-alert").addClass("alert alert-info").text("Please wait..").css("display", "block")
       $.ajax({
         'url' : '/auth/ldap/callback',
         'type' : 'post',
-        'data' : $("#ldap-form").serialize(),
-        'success' : function(data) { 
-          $(".ui-dialog-title").html("Redirecting..");
+        'data' :{username : $("#login-account-name").val(), 
+                 password : $("#login-account-password").val()},
+        'success' : function(data, textStatus, xhr) { 
+          $("#modal-alert").text("Success!.Redirecting..");
           location.reload();          
         },
         'error' : function(request,error)
         {
-          errorMessage.show().text("Invalid Credentials");
-          $(".ui-dialog-title").html("Login to Continue");
+          $("#modal-alert").removeClass("alert-info").addClass("alert-error").text("Incorrect Username or Password");
         }
     });
-  })
+  }
+ 
 });
