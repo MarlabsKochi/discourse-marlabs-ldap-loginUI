@@ -1,6 +1,8 @@
 $(document).ready(function(){
   $('#discourse-modal').on('shown.bs.modal', function(){
     if($("#discourse-modal").find("#login-form").length !== 0){
+      $("#discourse-modal").attr("data-backdrop", "static");
+      $("#discourse-modal").removeClass("ember-view");
       $("#discourse-modal").find("*").removeClass("ember-view");
       $( ".modal-footer" ).find( "button" ).removeAttr("data-ember-action");
       $("#login-buttons").css("display", "none");
